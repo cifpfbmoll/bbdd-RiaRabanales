@@ -60,9 +60,9 @@ public class BBDD {
             System.out.println("  0- salir");
             System.out.println("* * * * * * * * * * * *");
             System.out.println("OPCIÓN ELEGIDA:");
-            String opcionInicial = lector.nextLine();
+            String opcionConsulta = lector.nextLine();
 
-            switch (opcionInicial) {
+            switch (opcionConsulta) {
                 case "1":
                     //TODO
                     break;
