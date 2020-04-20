@@ -5,7 +5,7 @@ package bbdd;
 
 import java.util.Scanner;
 
-public class BBDD {
+public class Ej1 {
 
     public static Scanner lector = new Scanner(System.in);
 
