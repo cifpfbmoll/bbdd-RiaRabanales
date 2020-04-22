@@ -1,0 +1,28 @@
+- - - - - - - - - - - - - - - -
+Consulta bebedores en todos los bares:
+  -Amy
+  -Ben
+  -Coy
+  -Dan
+  -Eve
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta bebedores en 'James Joyce Pub':
+  -Amy
+  -Ben
+  -Dan
+  -Eve
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta número de bebedores de Amstel:
+  -4
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta bebedores en 'Talk of the Town':
+  -Ben
+  -Dan
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta número de bebedores de Dixie:
+  -2
+- - - - - - - - - - - - - - - -
