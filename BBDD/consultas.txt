@@ -26,3 +26,17 @@ Consulta bebedores en 'Talk of the Town':
 Consulta número de bebedores de Dixie:
   -2
 - - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta bebedores en 'The Edge':
+  -Coy
+  -Dan
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+Consulta bebedores en todos los bares:
+  -Amy
+  -Ben
+  -Coy
+  -Dan
+  -Eve
+  -Pepe
+- - - - - - - - - - - - - - - -

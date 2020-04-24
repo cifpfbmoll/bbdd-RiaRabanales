@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Ej1 {
@@ -40,10 +41,10 @@ public class Ej1 {
                     menuConsulta();
                     break;
                 case "2":
-                    //TODO
+                    actualizarCampos();
                     break;
                 case "3":
-                    //TODO
+                    insertarCampos();
                     break;
                 case "0":
                     salir = true;
@@ -226,6 +227,118 @@ public class Ej1 {
             System.out.println("* * * * * * * * * * * *");
             System.out.println("FIN DE LA CONSULTA");
         }
+    }
+
+    public static void actualizarCampos() {
+        try (Connection con = obtenerConexion()) {
+            //TODO       
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DE LA ACTUALIZACIÓN");
+        }
+    }
+
+    public static void insertarCampos() {
+        int tabla = seleccionarTabla();
+        String textoQuery = "";
+        ArrayList<String> textos = new ArrayList<>();
+        switch (tabla) {
+            case 1:         //tabla bar
+                textos.add("nombre del bar");
+                textos.add("dirección del bar");
+                textoQuery = "INSERT INTO bar VALUES (?, ?)";
+                break;
+            case 2:         // tabla cerveza
+                textos.add("nombre de la cerveza");
+                textos.add("fabricante");
+                textoQuery = "INSERT INTO beer VALUES (?, ?)";
+                break;
+            case 3:         //tabla drinker
+                textos.add("nombre del bebedor");
+                textos.add("dirección del bebedor");
+                textoQuery = "INSERT INTO drinker VALUES (?, ?)";
+                break;
+            case 4:         // tabla frequents
+                textos.add("nombre del bebedor");
+                textos.add("bar que frecuenta");
+                textos.add("veces a la semana que acude");
+                textoQuery = "INSERT INTO frequents VALUES (?, ?, ?)";
+                break;   
+            case 5:         //tabla likes
+                textos.add("nombre del bebedor");
+                textos.add("cerveza que le gusta");
+                textoQuery = "INSERT INTO likes VALUES (?, ?)";
+                break;
+            case 6:         //tabla serves
+                textos.add("nombre del bar");
+                textos.add("cerveza que sirve");
+                textos.add("precio");
+                textoQuery = "INSERT INTO serves VALUES (?, ?, ?)";
+                break;
+            //TODO: revisar lo de arriba para PKs y FKs
+            //TODO: imprimir en archivo las inserciones?            //TODO: revisar lo de arriba para PKs y FKs
+            //TODO: imprimir en archivo las inserciones?
+        }
+        insertarTabla(textos, textoQuery);        
+    }
+
+    public static void insertarTabla(ArrayList<String> inTextos, String query) {
+        try (Connection con = obtenerConexion()) {
+            //TODO: esto quedaría más limpio como arraylist de arraylists
+            ArrayList<String> inCampos = new ArrayList<>();
+            //Innecesario: ArrayList<String> inColumnas = new ArrayList<>(Arrays.asList("name", "address"));
+            System.out.println("Para insertar un nuevo elemento rellena la siguiente información:");
+            for (int i = 0; i < inTextos.size(); i++) {
+                String inCampo = "";
+                do {
+                    System.out.println("  -" + inTextos.get(i) + ":");
+                    inCampo = lector.nextLine();
+                } while (!validarCampo(inCampo));
+                inCampos.add(inCampo);
+            }
+            PreparedStatement prepStat = con.prepareStatement(query);
+            prepStat.setString(1, inCampos.get(0));
+            prepStat.setString(2, inCampos.get(1));
+            if (inTextos.size() == 3) {
+                prepStat.setString(3, inCampos.get(2));
+            }
+            prepStat.execute();
+            prepStat.close();
+
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DEL PROCESO");
+        }
+    }
+
+    public static boolean validarCampo(String campo) {
+        boolean campoValido = false;
+        if (!campo.equals("")) {
+            campoValido = true;
+        }
+        if (campoValido == false) {
+            System.out.println("ERROR: campo vacío. Introduce:");
+        }
+        return campoValido;
+    }
+
+    public static int seleccionarTabla() {
+        int tabla = 0;
+        while (tabla < 1 || tabla > 6) {
+            System.out.println("Selecciona en qué tabla quieres operar:");
+            System.out.println("  1- bares");
+            System.out.println("  2- cervezas");
+            System.out.println("  3- bebedores");
+            System.out.println("  4- frecuentan");
+            System.out.println("  5- gustos");
+            System.out.println("  6- sirven");
+            tabla = Integer.parseInt(lector.nextLine());
+        }
+        return tabla;
     }
 
     //Con este método obtengo la conexión:
