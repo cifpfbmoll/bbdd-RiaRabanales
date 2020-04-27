@@ -16,7 +16,7 @@ public class Ej1 {
     public static Scanner lector = new Scanner(System.in);
 
     public static void main(String[] args) {
-        //TODO crear fichero if not exists
+        //TODO crear fichero if not exists + elevar execpciones planteadas
         crearFichero();
         menuInicial();
     }
@@ -230,6 +230,38 @@ public class Ej1 {
     }
 
     public static void actualizarCampos() {
+        boolean salir3 = false;
+        while (salir3 == false) {
+            System.out.println("OPCIONES DE ACTUALIZACIÓN:");
+            System.out.println("  1- actualizar sin condiciones");
+            System.out.println("  2- actualizar un campo concreto");
+            System.out.println("  0- volver al menú principal");
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("OPCIÓN ELEGIDA:");
+            String opcionActualizar = lector.nextLine();
+
+            switch (opcionActualizar) {
+                case "1":
+                    actualizarCamposSinCondicion();
+                    salir3 = true;
+                    //No quiero que este menú salga eternamente.
+                    break;
+                case "2":
+                    actualizarCamposConCondicion();
+                    salir3 = true;
+                    break;
+                case "0":
+                    salir3 = true;
+                    break;
+                default:
+                    System.out.println("  Opción imposible.");
+            }
+        }
+
+    }
+
+    public static void actualizarCamposSinCondicion() {
+        //Nota: al no estableces condiciones este update es brutal: cambia todos los valores.
         try (Connection con = obtenerConexion()) {
             int tabla = seleccionarTabla();
             String columna = "";
@@ -278,9 +310,84 @@ public class Ej1 {
                 }
             }
             query += ";";
-            //TODO: pedir valores, rellenar campos
-            //prepStat.setString(3, inCampos.get(2));
+            //A continuación: pedir valores
+            ArrayList<String> valores = new ArrayList<>();
+            String valor = "";
+            int posColumna = 0;
+            while (valores.size() < columnas.size()) {
+                System.out.println("¿Qué nuevo valor quieres en la columna " + columnas.get(posColumna) + "?");
+                valor = lector.nextLine();
+                valores.add(columna);
+                posColumna++;
+            }
+
+            //A continuación: rellenar campos
             PreparedStatement prepStat = con.prepareStatement(query);
+            prepStat.setString(1, columnas.get(0));
+            prepStat.setString(2, valores.get(0));
+            if (columnas.size() > 1) {
+                prepStat.setString(3, columnas.get(1));
+                prepStat.setString(4, valores.get(1));
+                if (columnas.size() > 2) {
+                    prepStat.setString(5, columnas.get(2));
+                    prepStat.setString(6, valores.get(2));
+                }
+            }
+            prepStat.execute();
+            prepStat.close();
+            //TODO       
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DE LA ACTUALIZACIÓN");
+        }
+    }
+
+    public static void actualizarCamposConCondicion() {
+        //Nota: al no estableces condiciones este update es brutal: cambia todos los valores.
+        try (Connection con = obtenerConexion()) {
+            int tabla = seleccionarTabla();
+            String columna = "";
+            ArrayList<String> columnas = new ArrayList<>();
+            System.out.println("¿Qué columna quieres modificar?");
+            columna = lector.nextLine();
+            String query = "UPDATE ";
+
+            //Aquí empiezo a construir mi query:
+            switch (tabla) {
+                case 1:         //tabla bar
+                    query += "bar SET ? WHERE ? = ?;";
+                    break;
+                case 2:         // tabla cerveza
+                    query += "beer SET ? WHERE ? = ?;";
+                    break;
+                case 3:         //tabla drinker
+                    query += "drinker SET ? WHERE ? = ?;";
+                    break;
+                case 4:         // tabla frequents
+                    query += "frequents SET ? WHERE ? = ?;";
+                    break;
+                case 5:         //tabla likes
+                    query += "likes SET ? WHERE ? = ?;";
+                    break;
+                case 6:         //tabla serves
+                    query += "serves SET ? WHERE ? = ?;";
+                    break;
+            }
+            //A continuación: pedir valores
+            String valorAnterior = "";
+            System.out.println("¿Qué valor anterior quieres modificar?");
+            valorAnterior = lector.nextLine();
+            String valor = "";
+            System.out.println("¿Qué nuevo valor quieres en la columna " + columna + "?");
+            valor = lector.nextLine();
+
+            //A continuación: rellenar campos
+            PreparedStatement prepStat = con.prepareStatement(query);
+            prepStat.setString(1, valor);
+            prepStat.setString(2, columna);
+            prepStat.setString(3, valorAnterior);
             prepStat.execute();
             prepStat.close();
             //TODO       
