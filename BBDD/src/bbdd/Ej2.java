@@ -1,5 +1,5 @@
 /*
-Continuando con el ejercicio anterior, añadiremos una nueva opción en el menú que será “transacciones”, y que nos llevará a un nuevo menú para el que se mostrará las siguientes tres acciones:
+Continuando con el ejercicio anterior, añadiremos una nueva opción en el menú que será “transacciones”, y que nos llevará a un nuevo menú con tres acciones:
 Actualización simple. Incluye en esta opción dos sentencias update de una de las tablas, en las que se le pida al usuario qué campo quiere actualizar de dicha tabla y el valor del mismo. ¿Se actualiza la tabla si falla la primera sentencia? ¿Y si falla la segunda se actualiza la primera?
 Transacción_1. Incluye una transacción que se compone de tres sentencias de actualización sobre una tabla, aunque habrá una cuarta sentencia de actualización que no forma parte de la transacción. Realiza el control adecuado y contesta a las siguientes preguntas (incluye las preguntas y respuestas al inicio del programa como comentario). 
 ¿Se actualiza la tabla si falla la primera, segunda o tercera sentencia?
@@ -13,12 +13,12 @@ Transacción_2. Replica el apartado anterior en un nuevo método, pero incluyend
 package bbdd;
 
 //Para no compiacr el código, llamaré a los métodos del Ej1 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Ej2 {
+
     public static Scanner lector = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -33,10 +33,9 @@ public class Ej2 {
             System.out.println("* * * * * * * * * * * *");
             System.out.println("MENU PRINCIPAL:");
             System.out.println("* * * * * * * * * * * *");
-            System.out.println("  1- consulta");
-            System.out.println("  2- actualización");
-            System.out.println("  3- inserción");
-            System.out.println("  4- transacciones");
+            System.out.println("  1- actualización simple");
+            System.out.println("  2- transacción 1");
+            System.out.println("  3- transacción 2");
             System.out.println("  0- salir");
             System.out.println("* * * * * * * * * * * *");
             System.out.println("OPCIÓN ELEGIDA:");
@@ -65,11 +64,42 @@ public class Ej2 {
             }
         }
     }
-    
+
     public static void menuTransaccion() {
-        //TODO
+        boolean salir2 = false;
+        while (salir2 == false) {
+            System.out.println("");
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("MENU TRANSACCIONES:");
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("  1- consulta");
+            System.out.println("  2- actualización");
+            System.out.println("  3- inserción");
+            System.out.println("  0- vuelta al menú principal");
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("OPCIÓN ELEGIDA:");
+            String opcionTransaccion = lector.nextLine();
+
+            switch (opcionTransaccion) {
+                case "1":
+                    //TODO
+                    break;
+                case "2":
+                    //TODO
+                    break;
+                case "3":
+                    //TODO
+                    break;
+                case "0":
+                    salir2 = true;
+                    break;
+                default:
+                    System.out.println("  Opción imposible.");
+            }
+        }
+//TODO
     }
-    
+
     public static void crearFichero() {
         //TODO que el usuario pueda introducir el nombre
         File fichero = new File("consultasEj2.txt");
@@ -79,5 +109,5 @@ public class Ej2 {
             eio.printStackTrace();
         }
     }
-    
+
 }
