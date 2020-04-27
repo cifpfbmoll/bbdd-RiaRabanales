@@ -231,6 +231,58 @@ public class Ej1 {
 
     public static void actualizarCampos() {
         try (Connection con = obtenerConexion()) {
+            int tabla = seleccionarTabla();
+            String columna = "";
+            ArrayList<String> columnas = new ArrayList<>();
+            boolean otraColumna = true;
+            //Porque como mucho puedo modificar 3 columnas, y eso en según qué tablas.
+            int maxColumna = 0;
+            while (otraColumna == true && maxColumna < 3) {
+                System.out.println("¿Qué columna quieres modificar?");
+                columna = lector.nextLine();
+                columnas.add(columna);
+                maxColumna++;
+                System.out.println("¿Quieres modificar otra columna más? S/N");
+                String otraColumnaOpcion = lector.nextLine().toUpperCase();
+                if (!otraColumnaOpcion.equals("S")) {
+                    otraColumna = false;
+                }
+            }
+            String query = "UPDATE ";
+
+            //Aquí empiezo a construir mi query:
+            switch (tabla) {
+                case 1:         //tabla bar
+                    query += "bar SET ? = ?";
+                    break;
+                case 2:         // tabla cerveza
+                    query += "beer SET ? = ?";
+                    break;
+                case 3:         //tabla drinker
+                    query += "drinker SET ? = ?";
+                    break;
+                case 4:         // tabla frequents
+                    query += "frequents SET ? = ?";
+                    break;
+                case 5:         //tabla likes
+                    query += "likes SET ? = ?";
+                    break;
+                case 6:         //tabla serves
+                    query += "serves SET ? = ?";
+                    break;
+            }
+            if (columnas.size() > 1) {
+                query += " AND ? = ? ";
+                if (columnas.size() > 2) {
+                    query += " AND ? = ? ";
+                }
+            }
+            query += ";";
+            //TODO: pedir valores, rellenar campos
+            //prepStat.setString(3, inCampos.get(2));
+            PreparedStatement prepStat = con.prepareStatement(query);
+            prepStat.execute();
+            prepStat.close();
             //TODO       
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -265,7 +317,7 @@ public class Ej1 {
                 textos.add("bar que frecuenta");
                 textos.add("veces a la semana que acude");
                 textoQuery = "INSERT INTO frequents VALUES (?, ?, ?)";
-                break;   
+                break;
             case 5:         //tabla likes
                 textos.add("nombre del bebedor");
                 textos.add("cerveza que le gusta");
@@ -278,10 +330,9 @@ public class Ej1 {
                 textoQuery = "INSERT INTO serves VALUES (?, ?, ?)";
                 break;
             //TODO: revisar lo de arriba para PKs y FKs
-            //TODO: imprimir en archivo las inserciones?            //TODO: revisar lo de arriba para PKs y FKs
-            //TODO: imprimir en archivo las inserciones?
+            //TODO: imprimir en archivo las inserciones?        
         }
-        insertarTabla(textos, textoQuery);        
+        insertarTabla(textos, textoQuery);
     }
 
     public static void insertarTabla(ArrayList<String> inTextos, String query) {
