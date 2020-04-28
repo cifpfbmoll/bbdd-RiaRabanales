@@ -13,8 +13,12 @@ Transacción_2. Replica el apartado anterior en un nuevo método, pero incluyend
 package bbdd;
 
 //Para no compiacr el código, llamaré a los métodos del Ej1 
-import java.io.File;
-import java.io.IOException;
+import static bbdd.Ej1.obtenerConexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Ej2 {
@@ -22,7 +26,7 @@ public class Ej2 {
     public static Scanner lector = new Scanner(System.in);
 
     public static void main(String[] args) {
-        crearFichero();
+        Ej1.crearFichero();
         menuInicial();
     }
 
@@ -33,9 +37,10 @@ public class Ej2 {
             System.out.println("* * * * * * * * * * * *");
             System.out.println("MENU PRINCIPAL:");
             System.out.println("* * * * * * * * * * * *");
-            System.out.println("  1- actualización simple");
-            System.out.println("  2- transacción 1");
-            System.out.println("  3- transacción 2");
+            System.out.println("  1- consulta");
+            System.out.println("  2- actualización");
+            System.out.println("  3- inserción");
+            System.out.println("  4- transacción");
             System.out.println("  0- salir");
             System.out.println("* * * * * * * * * * * *");
             System.out.println("OPCIÓN ELEGIDA:");
@@ -72,9 +77,9 @@ public class Ej2 {
             System.out.println("* * * * * * * * * * * *");
             System.out.println("MENU TRANSACCIONES:");
             System.out.println("* * * * * * * * * * * *");
-            System.out.println("  1- consulta");
-            System.out.println("  2- actualización");
-            System.out.println("  3- inserción");
+            System.out.println("  1- actualización simple de los precios de cerveza");
+            System.out.println("  2- transacción 1");
+            System.out.println("  3- transacción 2");
             System.out.println("  0- vuelta al menú principal");
             System.out.println("* * * * * * * * * * * *");
             System.out.println("OPCIÓN ELEGIDA:");
@@ -82,13 +87,13 @@ public class Ej2 {
 
             switch (opcionTransaccion) {
                 case "1":
-                    //TODO
+                    actualizarSimple();
                     break;
                 case "2":
-                    //TODO
+                    realizarTransaccion1();
                     break;
                 case "3":
-                    //TODO
+                    realizarTransaccion2();
                     break;
                 case "0":
                     salir2 = true;
@@ -100,14 +105,115 @@ public class Ej2 {
 //TODO
     }
 
-    public static void crearFichero() {
-        //TODO que el usuario pueda introducir el nombre
-        File fichero = new File("consultasEj2.txt");
-        try {
-            fichero.createNewFile();
-        } catch (IOException eio) {
-            eio.printStackTrace();
+    public static void actualizarSimple() {
+        //He complicado las opciones demasiado.
+        try (Connection con = obtenerConexion()) {
+            System.out.println("ACTUALIZACIÓN DE PRECIOS:");
+            String query = "UPDATE serves SET price = ? WHERE bar = ? AND beer = ?;";
+            ArrayList<String> valores = seleccionarBarCerveza();
+            System.out.println("¿Qué nuevo precio quieres poner?");
+            double precio = Double.parseDouble(lector.nextLine());
+            //A continuación: rellenar campos
+            PreparedStatement prepStat = con.prepareStatement(query);
+            prepStat.setString(1, Double.toString(precio));
+            prepStat.setString(2, valores.get(0));
+            prepStat.setString(3, valores.get(1));
+            prepStat.execute();
+            prepStat.close();
+            //TODO CONTINUAR  
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DE LA ACTUALIZACIÓN");
         }
+    }
+
+    public static void realizarTransaccion1() {
+        try (Connection con = obtenerConexion()) {
+            System.out.println("TRANSACCIÓN 1:");
+            //TODO CONTINUAR  
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DE LA TRANSACCIÓN 1");
+        }
+    }
+
+    public static void realizarTransaccion2() {
+        try (Connection con = obtenerConexion()) {
+            System.out.println("TRANSACCIÓN 2:");
+            //TODO CONTINUAR  
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            System.out.println("* * * * * * * * * * * *");
+            System.out.println("FIN DE LA TRANSACCIÓN 2");
+        }
+    }
+
+    public static ArrayList<String> seleccionarBarCerveza() {
+        //TODO
+        ArrayList<String> valores = new ArrayList<>();
+        ArrayList<String> bares = consultarValores("serves", "bar");
+        System.out.println("¿En qué bar quieres modificar?");
+        for (int i = 0; i < bares.size(); i++) {
+            System.out.println("  -" + (i + 1) + ": " + bares.get(i));
+        }
+        int opcionBar = Integer.parseInt(lector.nextLine());
+        opcionBar--;
+        System.out.println("Selección: " + bares.get(opcionBar));
+        valores.add(bares.get(opcionBar));
+        ArrayList<String> cervezas = consultarValores("serves", "beer", bares.get(opcionBar));
+        System.out.println("¿El precio de qué cerveza quieres modificar?");
+        for (int i = 0; i < cervezas.size(); i++) {
+            System.out.println("  -" + (i + 1) + ": " + cervezas.get(i));
+        }
+        int opcionBeer = Integer.parseInt(lector.nextLine());
+        opcionBeer--;
+        System.out.println("Selección: " + cervezas.get(opcionBeer));
+        valores.add(cervezas.get(opcionBeer));
+        //traza: System.out.println(valores.get(0) + valores.get(1));
+        return valores;
+    }
+
+    //Me voy a crear métodos de consulta nuevos que valgan para todas las tablas, con overloading. Me acabará facilitando el trabajo.
+    public static ArrayList<String> consultarValores(String tabla, String columna) {
+        ArrayList<String> lista = new ArrayList<>();
+        try (Connection con = Ej1.obtenerConexion()) {
+            String query = "SELECT DISTINCT " + columna + " FROM " + tabla + ";";
+            PreparedStatement stat = con.prepareStatement(query);
+            ResultSet rset = stat.executeQuery();
+            while (rset.next()) {
+                String valor = rset.getString(1);
+                lista.add(valor);
+            }
+            rset.close();
+            stat.close();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return lista;
+    }
+
+    public static ArrayList<String> consultarValores(String tabla, String columna, String condicion) {
+        ArrayList<String> lista = new ArrayList<>();
+        try (Connection con = Ej1.obtenerConexion()) {
+            String query = "SELECT DISTINCT " + columna + " FROM " + tabla + " WHERE bar = ?;";
+            PreparedStatement stat = con.prepareStatement(query);
+            stat.setString(1, condicion);
+            ResultSet rset = stat.executeQuery();
+            while (rset.next()) {
+                String valor = rset.getString(1);
+                lista.add(valor);
+            }
+            rset.close();
+            stat.close();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return lista;
     }
 
 }
